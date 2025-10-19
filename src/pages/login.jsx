@@ -1,15 +1,15 @@
-import Image from "next/image";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Notice from "../../components/Notice";
-import { CreateAccount } from "../../components/Api";
+import { Signin } from "../../components/Api";
 import { useRouter } from "next/router";
-export default function Home() {
+import { setUserData } from "../../components/reducer/userdata.reducer";
+import { useDispatch } from "react-redux";
+export default function login() {
   const [FormData, SetFormData] = useState({
-    firstname: "",
-    lastname: "",
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
   const [isProcessing, SetisProcessing] = useState(false);
   const [Message, SetMessage] = useState({
     is_open: false,
@@ -17,16 +17,44 @@ export default function Home() {
     message: "",
   });
   const router = useRouter();
+
+  useEffect(() => {
+    let user_login = localStorage.getItem("user_login")
+      ? JSON.parse(localStorage.getItem("user_login"))
+      : "";
+
+    if (user_login) {
+      // router.replace({ pathname: "home" });
+      window.location.href = window.location.origin + "/home";
+    }
+  }, []);
+
   const handleSubmit = async () => {
+    console.log(FormData);
     SetisProcessing(true);
-    let response = await CreateAccount(FormData);
+    let response = await Signin(FormData);
+    console.log(response);
     if (response.word) {
+      localStorage.setItem("user_login", JSON.stringify(response.data));
+      sessionStorage.setItem("reload_home", "true");
+      dispatch(
+        setUserData({
+          userinfo: {
+            data: response.data,
+          },
+        })
+      );
+
       SetisProcessing(false);
       SetMessage({
         is_open: true,
         status: "success",
         message: response.word,
       });
+
+      setTimeout(() => {
+        router.replace({ pathname: "home" });
+      }, 2000);
     }
     if (response.status == 422) {
       SetisProcessing(false);
@@ -43,35 +71,6 @@ export default function Home() {
         <div className="w-full py-1 px-1 capitalize text-center flex  flex-col items-center">
           <h2> wallet transfer</h2>
         </div>
-        <section className="w-full flex flex-col items-center px-3 mt-2">
-          <div className="w-full text-left capitalize  px-2">First name</div>
-          <div className="w-full px-2">
-            <input
-              type="text"
-              value={FormData.firstname}
-              className="w-full p-2"
-              placeholder="Please Enter First Name"
-              onChange={(e) =>
-                SetFormData({ ...FormData, firstname: e.target.value })
-              }
-            />
-          </div>
-        </section>
-
-        <section className="w-full flex flex-col items-center px-3 mt-2">
-          <div className="w-full text-left capitalize  px-2">Last name</div>
-          <div className="w-full px-2">
-            <input
-              type="text"
-              value={FormData.lastname}
-              className="w-full p-2"
-              placeholder="Please Enter Last Name"
-              onChange={(e) =>
-                SetFormData({ ...FormData, lastname: e.target.value })
-              }
-            />
-          </div>
-        </section>
 
         <section className="w-full flex flex-col items-center px-3 mt-2">
           <div className="w-full text-left capitalize  px-2">Email</div>
@@ -104,6 +103,13 @@ export default function Home() {
             />
           </div>
         </section>
+        <section className="w-full  ">
+          <span
+            className=" float-right w-1/3 cursor-pointer "
+            onClick={() => router.replace({ pathname: "forgotten" })}>
+            forgotten password
+          </span>
+        </section>
         <div className="w-full mt-2 flex items-center justify-center">
           <button
             onClick={handleSubmit}
@@ -115,12 +121,12 @@ export default function Home() {
       <section className="w-2/5 flex flex-col ">
         <div className="w-full flex flex-row items-center justify-center capitalize space-x-1">
           <span className="text-sm font-medium text-black">
-            i already have an account click here to
+            i dont have an account
           </span>
           <span
-            onClick={() => router.replace({ pathname: "login" })}
+            onClick={() => router.replace({ pathname: "/" })}
             className="text-blue-400 text-sm font-medium cursor-pointer ">
-            login
+            Signup
           </span>
         </div>
       </section>

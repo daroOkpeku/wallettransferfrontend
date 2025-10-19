@@ -7,7 +7,7 @@ function Notice({ Message, SetMessage }) {
     <div
       className={
         Message.is_open
-          ? "w-full h-full fixed top-0 left-0  z-50 bg-black bg-opacity-50 flex items-center justify-center"
+          ? "w-full h-full fixed top-0 left-0  z-50  bg-neutral-500/10 flex items-center justify-center"
           : "hidden"
       }>
       <section className="bg-white rounded-md w-10/12 sm:w-3/5 md:w-1/2 lg:w-2/5 mt-10 flex flex-col items-center gap-4 py-4">

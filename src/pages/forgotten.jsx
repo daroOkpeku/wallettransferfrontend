@@ -1,14 +1,11 @@
-import Image from "next/image";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Notice from "../../components/Notice";
-import { CreateAccount } from "../../components/Api";
+import { ForgotPassword } from "../../components/Api";
 import { useRouter } from "next/router";
-export default function Home() {
+
+export default function forgotten() {
   const [FormData, SetFormData] = useState({
-    firstname: "",
-    lastname: "",
     email: "",
-    password: "",
   });
   const [isProcessing, SetisProcessing] = useState(false);
   const [Message, SetMessage] = useState({
@@ -17,10 +14,14 @@ export default function Home() {
     message: "",
   });
   const router = useRouter();
+
   const handleSubmit = async () => {
+    console.log(FormData);
     SetisProcessing(true);
-    let response = await CreateAccount(FormData);
-    if (response.word) {
+    // ForgotPassword
+    let response = await ForgotPassword(FormData);
+
+    if (response?.word) {
       SetisProcessing(false);
       SetMessage({
         is_open: true,
@@ -37,41 +38,13 @@ export default function Home() {
       });
     }
   };
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <section className=" w-10/12 sm:w-10/12 md:w-2/5  lg:w-2/5 rounded-sm mt-14 shadow-md gap-2 p-3">
         <div className="w-full py-1 px-1 capitalize text-center flex  flex-col items-center">
           <h2> wallet transfer</h2>
         </div>
-        <section className="w-full flex flex-col items-center px-3 mt-2">
-          <div className="w-full text-left capitalize  px-2">First name</div>
-          <div className="w-full px-2">
-            <input
-              type="text"
-              value={FormData.firstname}
-              className="w-full p-2"
-              placeholder="Please Enter First Name"
-              onChange={(e) =>
-                SetFormData({ ...FormData, firstname: e.target.value })
-              }
-            />
-          </div>
-        </section>
-
-        <section className="w-full flex flex-col items-center px-3 mt-2">
-          <div className="w-full text-left capitalize  px-2">Last name</div>
-          <div className="w-full px-2">
-            <input
-              type="text"
-              value={FormData.lastname}
-              className="w-full p-2"
-              placeholder="Please Enter Last Name"
-              onChange={(e) =>
-                SetFormData({ ...FormData, lastname: e.target.value })
-              }
-            />
-          </div>
-        </section>
 
         <section className="w-full flex flex-col items-center px-3 mt-2">
           <div className="w-full text-left capitalize  px-2">Email</div>
@@ -88,22 +61,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full flex flex-col items-center px-3 mt-2">
-          <div className="w-full text-left capitalize  px-2 font-medium">
-            Password
-          </div>
-          <div className="w-full px-2">
-            <input
-              type="password"
-              value={FormData.password}
-              className="w-full p-2"
-              placeholder="Please Enter Password"
-              onChange={(e) =>
-                SetFormData({ ...FormData, password: e.target.value })
-              }
-            />
-          </div>
-        </section>
         <div className="w-full mt-2 flex items-center justify-center">
           <button
             onClick={handleSubmit}
@@ -115,12 +72,12 @@ export default function Home() {
       <section className="w-2/5 flex flex-col ">
         <div className="w-full flex flex-row items-center justify-center capitalize space-x-1">
           <span className="text-sm font-medium text-black">
-            i already have an account click here to
+            i dont have an account
           </span>
           <span
-            onClick={() => router.replace({ pathname: "login" })}
-            className="text-blue-400 text-sm font-medium cursor-pointer ">
-            login
+            onClick={() => router.replace({ pathname: "/" })}
+            className="text-blue-400 text-sm font-medium cursor-pointer">
+            Signup
           </span>
         </div>
       </section>
